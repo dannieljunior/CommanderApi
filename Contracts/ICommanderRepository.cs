@@ -9,7 +9,7 @@ namespace Comander.Contracts
     {
         Task<IEnumerable<Command>> GetAppCommandsAsync();
         Task<Command> GetCommandByIdAsync(Guid pId);
-        Task<Command> CreateCommandAsync(Command pCommand);
+        Task CreateCommandAsync(Command pCommand);
         Task<bool> SaveChangesAsync();
     }
 }

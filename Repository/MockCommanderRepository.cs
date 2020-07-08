@@ -20,7 +20,7 @@ namespace Comander.Repository
             };
         }
 
-        public Task<Command> CreateCommandAsync(Command pCommand)
+        public Task CreateCommandAsync(Command pCommand)
         {
             throw new NotImplementedException();
         }

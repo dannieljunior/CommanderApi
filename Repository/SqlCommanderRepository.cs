@@ -16,13 +16,11 @@ namespace Comander.Repository
             _context = pContext;
         }
 
-        public async Task<Command> CreateCommandAsync(Command pCommand)
+        public async Task CreateCommandAsync(Command pCommand)
         {
             if(pCommand == null)
                 throw new ArgumentNullException(nameof(pCommand));
-            _context.Commands.Add(pCommand);
-            await SaveChangesAsync();
-            return await Task.FromResult(pCommand);
+            await _context.Commands.AddAsync(pCommand);
         }
 
         public async Task<IEnumerable<Command>> GetAppCommandsAsync()

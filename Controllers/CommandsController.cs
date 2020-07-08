@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -27,10 +28,13 @@ namespace Comander.Controllers
         public async Task<ActionResult<IEnumerable<CommandOutDto>>> GetAllCommands()
         {
             var _items = await _repository.GetAppCommandsAsync();
-            return Ok(_mapper.Map<IEnumerable<CommandOutDto>>(_items));
+            if(_items.Count() > 0)
+                return Ok(_mapper.Map<IEnumerable<CommandOutDto>>(_items));
+            else
+                return NoContent();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetCommandById")]
         public async Task<ActionResult<CommandOutDto>> GetCommandById([FromRoute] string id)
         {
             try
@@ -42,23 +46,29 @@ namespace Comander.Controllers
                 else
                     return NoContent();
             }
-            catch (Exception erro)
+            catch (Exception ex)
             {
-                 return StatusCode(StatusCodes.Status500InternalServerError,
-                                   new ErrorResponseDto(erro, false));
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                                  new ErrorResponseDto(ex, false));
             }
         }
 
         [HttpPost]
         public async Task<ActionResult<CommandOutDto>> CreateCommand([FromBody] CommandInDto pCommand)
         {
-            try{
-                var commandCreated = await _repository.CreateCommandAsync(_mapper.Map<Command>(pCommand));
-                return Ok(_mapper.Map<CommandOutDto>(commandCreated));
+            try
+            {
+                var commandToCreate = _mapper.Map<Command>(pCommand);
+                await _repository.CreateCommandAsync(commandToCreate);
+                await _repository.SaveChangesAsync();
+                //neste caso como estamos criando um novo recurso, nós temos que retorná-lo. Uma maneira de fazê-lo:
+                //o código do retorno é 201, e o corpo é o objeto criado no método
+                return CreatedAtRoute(nameof(GetCommandById), new { Id = commandToCreate.Id }, _mapper.Map<CommandOutDto>(commandToCreate));
             }
-            catch(Exception erro){
+            catch (Exception ex)
+            {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                                   new ErrorResponseDto(erro, false));
+                                   new ErrorResponseDto(ex, false));
             }
         }
     }
