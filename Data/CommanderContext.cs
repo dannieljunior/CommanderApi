@@ -9,6 +9,13 @@ namespace Comander.Data
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Command>()
+                .Property(p => p.DataCriacao)
+                .HasDefaultValueSql("getdate()");
+        }
+
         public virtual DbSet<Command> Commands { get; set; }
     }
 }

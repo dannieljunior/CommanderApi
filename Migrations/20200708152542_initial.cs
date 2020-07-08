@@ -8,11 +8,11 @@ namespace Comander.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Commands",
+                name: "Command",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    DataCriacao = table.Column<DateTime>(nullable: false),
+                    DataCriacao = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
                     DataAtualizacao = table.Column<DateTime>(nullable: true),
                     HowTo = table.Column<string>(maxLength: 250, nullable: false),
                     Line = table.Column<string>(nullable: false),
@@ -20,14 +20,14 @@ namespace Comander.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Commands", x => x.Id);
+                    table.PrimaryKey("PK_Command", x => x.Id);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Commands");
+                name: "Command");
         }
     }
 }

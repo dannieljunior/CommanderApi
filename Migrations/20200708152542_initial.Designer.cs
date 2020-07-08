@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comander.Migrations
 {
     [DbContext(typeof(CommanderContext))]
-    [Migration("20200708000236_initial")]
+    [Migration("20200708152542_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,7 +31,9 @@ namespace Comander.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DataCriacao")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("HowTo")
                         .IsRequired()
@@ -48,7 +50,7 @@ namespace Comander.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Commands");
+                    b.ToTable("Command");
                 });
 #pragma warning restore 612, 618
         }
