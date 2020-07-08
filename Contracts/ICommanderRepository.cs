@@ -11,5 +11,6 @@ namespace Comander.Contracts
         Task<Command> GetCommandByIdAsync(Guid pId);
         Task CreateCommandAsync(Command pCommand);
         Task<bool> SaveChangesAsync();
+        Task UpdateCommandAsync(Command pCommand);
     }
 }

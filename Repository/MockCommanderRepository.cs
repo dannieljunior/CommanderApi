@@ -39,5 +39,10 @@ namespace Comander.Repository
         {
             throw new NotImplementedException();
         }
+
+        public Task UpdateCommandAsync(Command pCommand)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

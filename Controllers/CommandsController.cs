@@ -28,7 +28,7 @@ namespace Comander.Controllers
         public async Task<ActionResult<IEnumerable<CommandOutDto>>> GetAllCommands()
         {
             var _items = await _repository.GetAppCommandsAsync();
-            if(_items.Count() > 0)
+            if (_items.Count() > 0)
                 return Ok(_mapper.Map<IEnumerable<CommandOutDto>>(_items));
             else
                 return NoContent();
@@ -56,20 +56,29 @@ namespace Comander.Controllers
         [HttpPost]
         public async Task<ActionResult<CommandOutDto>> CreateCommand([FromBody] CommandInDto pCommand)
         {
-            try
-            {
-                var commandToCreate = _mapper.Map<Command>(pCommand);
-                await _repository.CreateCommandAsync(commandToCreate);
-                await _repository.SaveChangesAsync();
-                //neste caso como estamos criando um novo recurso, nós temos que retorná-lo. Uma maneira de fazê-lo:
-                //o código do retorno é 201, e o corpo é o objeto criado no método
-                return CreatedAtRoute(nameof(GetCommandById), new { Id = commandToCreate.Id }, _mapper.Map<CommandOutDto>(commandToCreate));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                                   new ErrorResponseDto(ex, false));
-            }
+            var commandToCreate = _mapper.Map<Command>(pCommand);
+            await _repository.CreateCommandAsync(commandToCreate);
+            await _repository.SaveChangesAsync();
+            //neste caso como estamos criando um novo recurso, nós temos que retorná-lo. Uma maneira de fazê-lo:
+            //o código do retorno é 201, e o corpo é o objeto criado no método
+            return CreatedAtRoute(nameof(GetCommandById), new { Id = commandToCreate.Id }, _mapper.Map<CommandOutDto>(commandToCreate));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateCommand([FromRoute] string id, [FromBody] CommandInDto pCommand)
+        {
+            var commandToUpdate = await _repository.GetCommandByIdAsync(new Guid(id));
+            
+            if(commandToUpdate == null)
+                return NotFound();
+            
+            _mapper.Map(pCommand, commandToUpdate);
+
+            await _repository.UpdateCommandAsync(commandToUpdate);
+            await _repository.SaveChangesAsync();
+
+            return NoContent();
+
         }
     }
 }
