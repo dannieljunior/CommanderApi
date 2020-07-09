@@ -12,5 +12,6 @@ namespace Comander.Contracts
         Task CreateCommandAsync(Command pCommand);
         Task<bool> SaveChangesAsync();
         Task UpdateCommandAsync(Command pCommand);
+        Task DeleteCommandAsync(Command pCommand);
     }
 }

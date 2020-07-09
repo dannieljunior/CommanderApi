@@ -25,6 +25,11 @@ namespace Comander.Repository
             throw new NotImplementedException();
         }
 
+        public Task DeleteCommandAsync(Command pCommand)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IEnumerable<Command>> GetAppCommandsAsync()
         {
             return await Task.FromResult( _commands);

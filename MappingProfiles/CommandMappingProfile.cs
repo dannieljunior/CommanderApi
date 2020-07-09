@@ -10,6 +10,7 @@ namespace Comander.MappingProfiles
         {
             CreateMap<Command, CommandOutDto>();
             CreateMap<CommandInDto, Command>();
+            CreateMap<Command, CommandInDto>();
         }
     }
 }

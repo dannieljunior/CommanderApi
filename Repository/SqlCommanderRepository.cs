@@ -18,9 +18,16 @@ namespace Comander.Repository
 
         public async Task CreateCommandAsync(Command pCommand)
         {
-            if(pCommand == null)
+            if (pCommand == null)
                 throw new ArgumentNullException(nameof(pCommand));
             await _context.Commands.AddAsync(pCommand);
+        }
+
+        public async Task DeleteCommandAsync(Command pCommand)
+        {
+            if (pCommand == null)
+                throw new ArgumentNullException(nameof(pCommand));
+            await Task.FromResult(_context.Commands.Remove(pCommand));
         }
 
         public async Task<IEnumerable<Command>> GetAppCommandsAsync()
@@ -30,6 +37,8 @@ namespace Comander.Repository
 
         public async Task<Command> GetCommandByIdAsync(Guid pId)
         {
+            if (pId == null)
+                throw new ArgumentNullException(nameof(pId));
             return await _context.Commands.FirstOrDefaultAsync(x => x.Id == pId);
         }
 
@@ -40,6 +49,8 @@ namespace Comander.Repository
 
         public async Task UpdateCommandAsync(Command pCommand)
         {
+            if (pCommand == null)
+                throw new ArgumentNullException(nameof(pCommand));
             pCommand.DataAtualizacao = DateTime.Now;
             await Task.FromResult(_context.Attach(pCommand));
         }

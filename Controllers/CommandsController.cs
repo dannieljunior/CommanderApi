@@ -8,6 +8,7 @@ using Comander.Dto;
 using AutoMapper;
 using Comander.Contracts;
 using Comander.Models;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace Comander.Controllers
 {
@@ -68,17 +69,59 @@ namespace Comander.Controllers
         public async Task<ActionResult> UpdateCommand([FromRoute] string id, [FromBody] CommandInDto pCommand)
         {
             var commandToUpdate = await _repository.GetCommandByIdAsync(new Guid(id));
-            
-            if(commandToUpdate == null)
+
+            if (commandToUpdate == null)
                 return NotFound();
-            
+
             _mapper.Map(pCommand, commandToUpdate);
 
             await _repository.UpdateCommandAsync(commandToUpdate);
             await _repository.SaveChangesAsync();
 
             return NoContent();
+        }
 
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> PatchCommand([FromRoute] string id, [FromBody] JsonPatchDocument<CommandInDto> pPatchCommand)
+        {
+            var commandToUpdate = await _repository.GetCommandByIdAsync(new Guid(id));
+
+            if (commandToUpdate == null)
+                return NotFound();
+
+            var commandToPatch = _mapper.Map<CommandInDto>(commandToUpdate);
+            pPatchCommand.ApplyTo(commandToPatch, ModelState);
+
+            if (!TryValidateModel(commandToPatch))
+                return ValidationProblem(ModelState);
+
+            _mapper.Map(commandToPatch, commandToUpdate);
+
+            await _repository.UpdateCommandAsync(commandToUpdate);
+            await _repository.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteCommand([FromRoute] string id)
+        {
+            try
+            {
+                var commandToDelete = await _repository.GetCommandByIdAsync(new Guid(id));
+
+                if (commandToDelete == null)
+                    return NotFound("O recurso que você deseja excluir não foi encontrado");
+
+                await _repository.DeleteCommandAsync(commandToDelete);
+                await _repository.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return ValidationProblem(ex.Message);
+            }
         }
     }
 }
